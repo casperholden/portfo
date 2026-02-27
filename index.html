@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Casper Holden</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="grid-overlay" id="gridOverlay" aria-hidden="true"></div>
+
+    <header class="site-header">
+      <div class="header-inner">
+        <p class="bio" id="bio"></p>
+        <div class="contact-links">
+          <span class="link-group">(<a href="#" id="linkLinkedin" target="_blank" rel="noopener noreferrer">linkedin</a>)</span>
+          <span class="link-group">(<a href="#" id="linkMail">mail</a>)</span>
+          <span class="link-group">(<button type="button" class="color-mode-toggle" id="colorModeToggle" aria-pressed="false">light</button>)</span>
+        </div>
+      </div>
+    </header>
+
+    <h1 class="headline" id="headline">Casper Holden</h1>
+
+    <main class="scroll-content">
+      <div class="project-list" id="projectList"></div>
+    </main>
+
+    <aside class="panel" id="panel">
+      <button type="button" class="panel-option" id="toggleGrow" aria-pressed="true">[x] Grow Effect</button>
+      <button type="button" class="panel-option" id="toggleGrowFromRight" aria-pressed="false">[ ] Grow from right</button>
+      <button type="button" class="panel-option" id="toggleImageFiveCols" aria-pressed="false">[ ] 5-col image</button>
+      <button type="button" class="panel-option" id="toggleLockImageRatio" aria-pressed="false">[ ] Lock image ratio</button>
+      <button type="button" class="panel-option" id="toggleV1" aria-pressed="true">[x] Ver 1: Fixed</button>
+      <button type="button" class="panel-option" id="toggleV2" aria-pressed="false">[ ] Ver 2: Shift</button>
+      <button type="button" class="panel-option" id="toggleHideEmpty" aria-pressed="false">[ ] Hide empty image</button>
+      <button type="button" class="panel-option" id="toggleDummyCopy" aria-pressed="true">[x] Dummy content</button>
+    </aside>
+
+    <script src="main.js"></script>
+  </body>
+</html>

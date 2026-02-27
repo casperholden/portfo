@@ -1,0 +1,513 @@
+/* ==========================================================================
+   Casper Holden Portfolio – Design tokens & layout
+   ========================================================================== */
+
+:root {
+  /* Colors */
+  --color-bg: #FFFFFF;
+  --color-text: #212121;
+  --color-stroke: #D0D0D0;
+  --color-placeholder: #F1F1F1;
+  --color-grid: rgba(255, 0, 0, 0.5);
+
+  /* Typography */
+  --font: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --tracking: 0.04em;
+  --tracking-headline: 0.02em;
+  --leading: 1.2;
+  --size-headline: 32px;
+  --size-body: 15px;
+  --size-ui: 12px;
+
+  /* Spacing */
+  --small-gap: 4px;
+  --medium-gap: 8px;
+  --top-margin: 20px;
+  --link-gap: 12px;
+
+  /* Grid – set by JS or defaults for desktop */
+  --cols: 12;
+  --margin: 20px;
+  --gutter: 20px;
+  --col-w: calc((100vw - 2 * var(--margin) - (var(--cols) - 1) * var(--gutter)) / var(--cols));
+  --image-cols-max: 4;
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --cols: 8;
+    --margin: 16px;
+    --gutter: 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  :root {
+    --cols: 6;
+    --margin: 12px;
+    --gutter: 12px;
+  }
+}
+
+/* Base */
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font);
+  font-size: var(--size-body);
+  letter-spacing: var(--tracking);
+  line-height: var(--leading);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+/* Grid overlay (toggle with G) – left and right edge of each column, like p5 drawGrid */
+.grid-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+  background: repeating-linear-gradient(
+    to right,
+    var(--color-grid) 0,
+    var(--color-grid) 1px,
+    transparent 1px,
+    transparent calc(var(--col-w) - 1px),
+    var(--color-grid) var(--col-w),
+    var(--color-grid) calc(var(--col-w) + 1px),
+    transparent calc(var(--col-w) + 1px),
+    transparent calc(var(--col-w) + var(--gutter))
+  );
+  background-position: var(--margin) 0;
+  background-size: calc(var(--col-w) + var(--gutter)) 100%;
+}
+
+.grid-overlay.is-visible {
+  display: block;
+}
+
+/* ==========================================================================
+   Header (sticky)
+   ========================================================================== */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: transparent;
+  color: #fff;
+  mix-blend-mode: difference;
+  padding-top: var(--top-margin);
+  padding-bottom: var(--small-gap);
+  -webkit-font-smoothing: antialiased;
+}
+
+.header-inner {
+  display: grid;
+  grid-template-columns: repeat(12, var(--col-w));
+  gap: 0 var(--gutter);
+  margin: 0 var(--margin);
+  max-width: 100%;
+  isolation: isolate;
+}
+
+@media (max-width: 1024px) {
+  .header-inner {
+    grid-template-columns: repeat(8, var(--col-w));
+  }
+}
+
+@media (max-width: 600px) {
+  .header-inner {
+    grid-template-columns: repeat(6, var(--col-w));
+  }
+}
+
+.bio {
+  grid-column: 1 / 5;
+  margin: 0;
+  max-width: calc(4 * var(--col-w) + 3 * var(--gutter));
+}
+
+@media (max-width: 1024px) {
+  .bio {
+    grid-column: 1 / 6;
+    max-width: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .bio {
+    grid-column: 1 / -1;
+  }
+}
+
+.contact-links {
+  grid-column: 10 / -1;
+  display: flex;
+  align-items: baseline;
+  gap: var(--link-gap);
+  flex-wrap: wrap;
+}
+
+@media (max-width: 1024px) {
+  .contact-links {
+    grid-column: 6 / -1;
+  }
+}
+
+@media (max-width: 600px) {
+  .contact-links {
+    grid-column: 1 / -1;
+  }
+}
+
+.link-group {
+  white-space: nowrap;
+}
+
+.link-gap {
+  display: inline-block;
+  width: var(--link-gap);
+}
+
+.contact-links a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+
+.contact-links a:hover {
+  border-bottom-color: transparent;
+}
+
+.color-mode-toggle {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  letter-spacing: var(--tracking);
+  cursor: pointer;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
+}
+
+.color-mode-toggle:hover {
+  border-bottom-color: transparent;
+}
+
+/* Dark mode */
+body.color-mode-dark {
+  --color-bg: #121212;
+  --color-text: #ffffff;
+  --color-stroke: #4a4a4a;
+  --color-placeholder: #2d2d2d;
+}
+
+/* ==========================================================================
+   Centered headline (fixed at 50vh)
+   ========================================================================== */
+
+.headline {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  font-size: var(--size-headline);
+  font-weight: 400;
+  letter-spacing: var(--tracking-headline);
+  color: #fff;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  z-index: 2001;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ==========================================================================
+   Scroll content & project list
+   ========================================================================== */
+
+.scroll-content {
+  position: relative;
+  z-index: 1;
+  padding-top: 80vh;
+  padding-bottom: 40vh;
+}
+
+.project-list {
+  margin: 0 var(--margin);
+}
+
+/* Project row */
+.project-row {
+  border-top: 1px solid var(--color-stroke);
+  padding-top: var(--small-gap);
+  padding-bottom: var(--small-gap);
+  --grow-progress: 1;
+}
+
+/* Version 1 (Fixed): 12-col grid – title fixed to col 6, image grows in cols 2–5 */
+.project-row-inner {
+  display: grid;
+  grid-template-columns: repeat(12, var(--col-w));
+  gap: 0 var(--gutter);
+  align-items: start;
+}
+
+.project-year {
+  grid-column: 1;
+  font-size: var(--size-body);
+  margin: 0;
+}
+
+/* Wrapper for image + title (cols 2–6); Ver 1 = internal grid, Ver 2 = flex so title shifts */
+.project-image-title-wrap {
+  grid-column: 2 / 7;
+  display: grid;
+  grid-template-columns: repeat(5, var(--col-w));
+  gap: 0 var(--gutter);
+  align-items: start;
+  min-width: 0;
+}
+
+.project-image-wrap {
+  grid-column: 1 / 5;
+  width: calc(var(--col-w) + ((var(--image-cols-max) - 1) * var(--col-w) + (var(--image-cols-max) - 1) * var(--gutter)) * var(--grow-progress));
+  min-width: var(--col-w);
+  aspect-ratio: 4 / 3;
+  background: var(--color-placeholder);
+  overflow: hidden;
+}
+
+.project-image-wrap.is-locked {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--size-ui);
+  color: var(--color-text);
+}
+
+.project-image-wrap img,
+.project-image-wrap video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top;
+  display: block;
+}
+
+/* Lock image ratio: preserve original aspect ratio; max height = 4:3 at 4 cols */
+body.lock-image-ratio .project-image-wrap {
+  aspect-ratio: auto;
+  height: auto;
+  max-height: calc((4 * var(--col-w) + 3 * var(--gutter)) * 3 / 4);
+  min-height: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  background: transparent;
+}
+
+body.lock-image-ratio.grow-from-right .project-image-wrap {
+  justify-content: flex-end;
+}
+
+body.lock-image-ratio .project-image-wrap img,
+body.lock-image-ratio .project-image-wrap video {
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc((4 * var(--col-w) + 3 * var(--gutter)) * 3 / 4);
+  object-fit: contain;
+}
+
+.project-title-cell {
+  grid-column: 5;
+  min-width: 0;
+}
+
+.project-title-line {
+  font-size: var(--size-body);
+  margin: 0;
+}
+
+.project-title-line a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-text);
+}
+
+.project-title-line a:hover {
+  border-bottom-color: transparent;
+}
+
+.project-desc {
+  grid-column: 7 / 10;
+  font-size: var(--size-body);
+  margin: 0;
+  min-width: 0;
+}
+
+.project-disciplines {
+  grid-column: 10 / 13;
+  font-size: var(--size-body);
+  margin: 0;
+  min-width: 0;
+}
+
+/* Grow from right: image aligned to right edge of col 5, expands left */
+body.grow-from-right .project-image-wrap {
+  margin-left: auto;
+}
+
+/* 5-col image: image spans 5 cols, title + desc shift right, desc spans 2 cols */
+body.image-five-cols {
+  --image-cols-max: 5;
+}
+
+body.image-five-cols .project-image-title-wrap {
+  grid-column: 2 / 8;
+  grid-template-columns: repeat(6, var(--col-w));
+}
+
+body.image-five-cols .project-image-wrap {
+  grid-column: 1 / 6;
+}
+
+body.image-five-cols .project-title-cell {
+  grid-column: 6;
+}
+
+body.image-five-cols .project-desc {
+  grid-column: 8 / 10;
+}
+
+/* Version 2 (Shifting): title follows image; description and disciplines stay fixed to cols 7–9 and 10–12 */
+body.version-shift .project-row-inner {
+  display: grid;
+  grid-template-columns: repeat(12, var(--col-w));
+  gap: 0 var(--gutter);
+}
+
+body.version-shift .project-image-title-wrap {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0 var(--gutter);
+  grid-column: 2 / 7;
+}
+
+body.image-five-cols.version-shift .project-image-title-wrap {
+  grid-column: 2 / 8;
+}
+
+body.version-shift .project-image-wrap {
+  grid-column: auto;
+  flex: 0 0 auto;
+}
+
+body.image-five-cols.version-shift .project-image-wrap {
+  flex: 0 0 calc(5 * var(--col-w) + 4 * var(--gutter));
+}
+
+body.version-shift .project-title-cell {
+  grid-column: auto;
+  flex: 0 0 var(--col-w);
+}
+
+body.version-shift .project-desc {
+  grid-column: 7 / 10;
+}
+
+body.image-five-cols.version-shift .project-desc {
+  grid-column: 8 / 10;
+}
+
+body.version-shift .project-disciplines {
+  grid-column: 10 / 13;
+}
+
+/* Hide empty image: collapse image wrapper visually; keep same grid so title stays in col 6 */
+.project-row.row-hide-image .project-image-wrap {
+  overflow: hidden;
+  visibility: hidden;
+  width: 0;
+  min-width: 0;
+  height: 0;
+}
+
+body.version-shift .project-row.row-hide-image .project-image-title-wrap {
+  display: grid;
+  grid-template-columns: repeat(5, var(--col-w));
+  gap: 0 var(--gutter);
+}
+
+body.image-five-cols.version-shift .project-row.row-hide-image .project-image-title-wrap {
+  grid-template-columns: repeat(6, var(--col-w));
+}
+
+body.version-shift .project-row.row-hide-image .project-image-wrap {
+  grid-column: 1 / 5;
+  flex: none;
+  width: 0;
+  min-width: 0;
+  visibility: hidden;
+  overflow: hidden;
+  height: 0;
+}
+
+body.image-five-cols.version-shift .project-row.row-hide-image .project-image-wrap {
+  grid-column: 1 / 6;
+}
+
+body.version-shift .project-row.row-hide-image .project-title-cell {
+  grid-column: 5;
+}
+
+body.image-five-cols.version-shift .project-row.row-hide-image .project-title-cell {
+  grid-column: 6;
+}
+
+/* ==========================================================================
+   Panel (top right, toggle with P)
+   ========================================================================== */
+
+.panel {
+  position: fixed;
+  top: calc(var(--top-margin) + 100px);
+  right: var(--margin);
+  z-index: 101;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: var(--size-ui);
+}
+
+.panel.is-hidden {
+  display: none;
+}
+
+.panel-option {
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  letter-spacing: var(--tracking);
+  cursor: pointer;
+  text-align: left;
+}
+
+.panel-option:hover {
+  opacity: 0.8;
+}
+
+.panel-option[aria-pressed="false"] {
+  opacity: 0.7;
+}
