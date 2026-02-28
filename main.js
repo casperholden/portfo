@@ -614,10 +614,10 @@
     function animateCounter() {
       if (displayPercent < targetPercent) {
         displayPercent = Math.min(displayPercent + 1, targetPercent);
-        counter.textContent = Math.round(displayPercent);
+        counter.textContent = '(' + Math.round(displayPercent) + ')';
         requestAnimationFrame(animateCounter);
       } else if (targetPercent >= 100) {
-        counter.textContent = '100';
+        counter.textContent = '(100)';
         setTimeout(function () {
           counter.classList.add('is-hidden');
           document.body.classList.remove('is-loading');

@@ -103,33 +103,14 @@
    ========================================================================== */
 
 .preloader {
-  position: fixed;
-  left: 0;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  margin: 0;
-  text-align: center;
-  white-space: nowrap;
-  font-family: var(--font);
-  font-size: var(--size-headline);
-  font-weight: 400;
-  letter-spacing: var(--tracking-headline);
-  line-height: var(--leading);
-  color: #fff;
-  mix-blend-mode: difference;
-  -webkit-font-smoothing: antialiased;
-  pointer-events: none;
-  z-index: 9998;
   transition: opacity 0.3s ease;
 }
 
 .preloader.is-hidden {
-  opacity: 0;
+  display: none;
 }
 
 body.is-loading .site-header,
-body.is-loading .headline,
 body.is-loading .scroll-content,
 body.is-loading .panel {
   opacity: 0;
