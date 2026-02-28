@@ -58,7 +58,20 @@
   const ALL_MEDIA_EXTENSIONS = ['jpg', 'png', 'gif', 'webp', 'mp4', 'webm'];
   const BASE_MEDIA_PATH = 'project';
   var mediaCache = {};
-  const DUMMY_DESCRIPTION = 'Description';
+  const DUMMY_DESCRIPTIONS = [
+    'Award-winning digital experience for a global brand.',
+    'Interactive storytelling platform with real-time data.',
+    'Brand identity and campaign for cultural institution.',
+    'Immersive web experience with 3D and motion.',
+    'Product design and prototyping for early-stage startup.',
+    'Editorial design system for a media company.',
+    'E-commerce experience with personalized content.',
+    'Creative direction for multi-channel campaign.',
+    'Data-driven dashboard with intuitive UX.',
+    'Visual identity and digital presence for studio.',
+    'Responsive site with custom CMS integration.',
+    'Motion design and art direction for launch.'
+  ];
   const DUMMY_DISCIPLINE = '(discipline)';
 
   function formatDiscipline(str) {
@@ -440,12 +453,11 @@
 
   function buildTitleHtml(project, visitLabel) {
     const label = visitLabel || 'Visit';
-    let line1 = escapeHtml(project.title);
+    let html = escapeHtml(project.title);
     if (project.linkOut) {
-      line1 += ' (<a href="' + escapeHtml(project.linkOut) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(label) + '</a>)';
+      html += ' (<a href="' + escapeHtml(project.linkOut) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(label) + '</a>)';
     }
-    const line2 = (project.projectSubtitle || '').trim();
-    return line2 ? line1 + ' ' + escapeHtml(line2) : line1;
+    return html;
   }
 
   function createProjectRow(project, visitLabel, rowIndex) {
@@ -557,7 +569,7 @@
 
     const descEl = document.createElement('p');
     descEl.className = 'project-desc';
-    descEl.textContent = (project.description || (state.showDummyContent ? DUMMY_DESCRIPTION : '')).trim();
+    descEl.textContent = (project.description || (state.showDummyContent ? DUMMY_DESCRIPTIONS[rowIndex % DUMMY_DESCRIPTIONS.length] : '')).trim();
 
     const discEl = document.createElement('p');
     discEl.className = 'project-disciplines';
