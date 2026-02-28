@@ -581,21 +581,28 @@
         var extIdx = 0;
 
         function tryExt() {
-          if (extIdx >= IMAGE_EXTENSIONS.length) {
+          if (extIdx >= ALL_MEDIA_EXTENSIONS.length) {
             onFolderDone();
             return;
           }
-          var ext = IMAGE_EXTENSIONS[extIdx];
+          var ext = ALL_MEDIA_EXTENSIONS[extIdx];
           extIdx++;
-          var img = new Image();
-          img.onload = function () {
-            fileNum++;
-            probeFile();
-          };
-          img.onerror = function () {
-            tryExt();
-          };
-          img.src = base + ext;
+
+          if (VIDEO_EXTENSIONS.indexOf(ext) === -1) {
+            var img = new Image();
+            img.onload = function () { fileNum++; probeFile(); };
+            img.onerror = tryExt;
+            img.src = base + ext;
+          } else {
+            fetch(base + ext)
+              .then(function (res) {
+                if (res.ok) {
+                  return res.blob().then(function () { fileNum++; probeFile(); });
+                }
+                tryExt();
+              })
+              .catch(tryExt);
+          }
         }
         tryExt();
       }
