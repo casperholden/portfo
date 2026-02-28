@@ -161,7 +161,8 @@
 
   function setCopy() {
     if (dom.bio) dom.bio.textContent = state.copy.bio || '';
-    if (dom.headline) dom.headline.textContent = state.copy.headline || 'Casper Holden';
+    var ht = document.getElementById('headlineText');
+    if (ht) ht.textContent = state.copy.headline || 'Casper Holden';
     if (dom.linkLinkedin) {
       dom.linkLinkedin.textContent = state.copy.linkedin || 'linkedin';
       dom.linkLinkedin.href = state.copy.linkedin_url || '#';
@@ -691,7 +692,8 @@
 
   function render() {
     if (dom.bio) dom.bio.textContent = state.copy.bio || '';
-    if (dom.headline) dom.headline.textContent = state.copy.headline || 'Casper Holden';
+    var ht2 = document.getElementById('headlineText');
+    if (ht2) ht2.textContent = state.copy.headline || 'Casper Holden';
     if (dom.linkLinkedin) {
       dom.linkLinkedin.textContent = state.copy.linkedin || 'linkedin';
       dom.linkLinkedin.href = state.copy.linkedin_url || '#';
