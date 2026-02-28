@@ -362,7 +362,7 @@
       line1 += ' (<a href="' + escapeHtml(project.linkOut) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(label) + '</a>)';
     }
     const line2 = (project.projectSubtitle || '').trim();
-    return line2 ? line1 + '<br>' + escapeHtml(line2) : line1;
+    return line2 ? line1 + ' ' + escapeHtml(line2) : line1;
   }
 
   function createProjectRow(project, visitLabel, rowIndex) {

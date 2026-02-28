@@ -184,9 +184,9 @@ body {
 }
 
 .bio {
-  grid-column: 1 / 5;
-  margin: 0;
-  max-width: calc(4 * var(--col-w) + 3 * var(--gutter));
+  grid-column: 1 / 7;
+  margin: 16px 0 0;
+  max-width: calc(6 * var(--col-w) + 5 * var(--gutter));
 }
 
 .contact-links {
@@ -272,6 +272,12 @@ body.color-mode-dark {
   z-index: 1;
   padding-top: 80vh;
   padding-bottom: 40vh;
+}
+
+@media (max-width: 1024px) {
+  .scroll-content {
+    padding-top: calc(80vh - 12rem);
+  }
 }
 
 .project-list {
