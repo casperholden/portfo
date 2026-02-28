@@ -276,7 +276,7 @@ body.color-mode-dark {
 
 @media (max-width: 1024px) {
   .scroll-content {
-    padding-top: calc(80vh - 12rem);
+    padding-top: 40vh;
   }
 }
 
@@ -691,4 +691,10 @@ body.image-five-cols.version-shift .project-row.row-hide-image .project-title-ce
 
 .panel-option[aria-pressed="false"] {
   opacity: 0.7;
+}
+
+@media (max-width: 1024px) {
+  .panel {
+    display: none;
+  }
 }
