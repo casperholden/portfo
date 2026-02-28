@@ -178,6 +178,7 @@
       };
       img.onload = function () {
         wrap.dataset.mediaIndex = String(tried);
+        wrap.dataset.fileNumber = '1';
       };
     }
     tryNext();
@@ -272,6 +273,7 @@
       video.oncanplay = function () {
         video.oncanplay = null;
         wrap.dataset.mediaIndex = String(4 + tried);
+        wrap.dataset.fileNumber = '1';
         video.play().catch(function () {});
       };
       video.load();
@@ -339,14 +341,64 @@
     tryNext();
   }
 
-  /** Cycle to next media in folder on click. */
+  /** Load a specific file number from a project folder, trying all extensions. */
+  function loadFileByNumber(wrap, folderName, fileNum, imgAlt, onSuccess, onAllFailed) {
+    if (!folderName) { if (onAllFailed) onAllFailed(); return; }
+    var base = BASE_MEDIA_PATH + '/' + folderName + '/' + fileNum + '.';
+    var tried = 0;
+    function tryNext() {
+      if (tried >= ALL_MEDIA_EXTENSIONS.length) { if (onAllFailed) onAllFailed(); return; }
+      var ext = ALL_MEDIA_EXTENSIONS[tried];
+      tried++;
+      if (VIDEO_EXTENSIONS.indexOf(ext) === -1) {
+        clearMediaWrap(wrap);
+        var img = document.createElement('img');
+        if (imgAlt != null) img.alt = imgAlt;
+        wrap.appendChild(img);
+        img.src = base + ext;
+        img.onerror = tryNext;
+        img.onload = function () {
+          wrap.dataset.fileNumber = String(fileNum);
+          if (onSuccess) onSuccess();
+        };
+      } else {
+        clearMediaWrap(wrap);
+        var video = document.createElement('video');
+        video.muted = true; video.loop = true; video.autoplay = true; video.playsInline = true;
+        video.setAttribute('muted', ''); video.setAttribute('loop', '');
+        video.setAttribute('autoplay', ''); video.setAttribute('playsinline', '');
+        var source = document.createElement('source');
+        source.src = base + ext;
+        source.type = 'video/' + (ext === 'mp4' ? 'mp4' : 'webm');
+        video.appendChild(source);
+        wrap.appendChild(video);
+        var onErr = function () { video.onerror = null; source.onerror = null; tryNext(); };
+        video.onerror = onErr;
+        source.onerror = onErr;
+        video.oncanplay = function () {
+          video.oncanplay = null;
+          wrap.dataset.fileNumber = String(fileNum);
+          video.play().catch(function () {});
+          if (onSuccess) onSuccess();
+        };
+        video.load();
+      }
+    }
+    tryNext();
+  }
+
+  /** Cycle to next file in the project folder on click. */
   function cycleMediaInWrap(wrap) {
-    const folderName = wrap.dataset.folderName;
+    var folderName = wrap.dataset.folderName;
     if (!folderName) return;
-    const current = parseInt(wrap.dataset.mediaIndex || '0', 10);
-    const nextIndex = (current + 1) % ALL_MEDIA_EXTENSIONS.length;
-    const alt = wrap.querySelector('img')?.alt || '';
-    trySetMediaAtIndex(wrap, folderName, nextIndex, alt || undefined, function () {}, function () {});
+    var current = parseInt(wrap.dataset.fileNumber || '1', 10);
+    var next = current + 1;
+    var alt = (wrap.querySelector('img') || {}).alt || '';
+    loadFileByNumber(wrap, folderName, next, alt || undefined, function () {}, function () {
+      if (next > 1) {
+        loadFileByNumber(wrap, folderName, 1, alt || undefined, function () {}, function () {});
+      }
+    });
   }
 
   function escapeHtml(s) {
