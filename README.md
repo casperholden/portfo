@@ -59,6 +59,37 @@ Use a sheet named **indexcopy** (or **copy**). Columns:
 
 Labels are lowercased and spaces replaced with `_` (e.g. `mail_url`). The site reads copy on each load; update the sheet and refresh the page to see changes.
 
+## Password gate
+
+The site includes a client-side password gate. Visitors see a password prompt before any content loads. Once entered correctly, access is saved in `localStorage` so the browser remembers it.
+
+**Default password:** `preview`
+
+### Changing the password
+
+1. Open your browser console (or any terminal with Node.js) and run:
+
+   ```bash
+   # Terminal (Node.js)
+   node -e "require('crypto').subtle.digest('SHA-256', new TextEncoder().encode('YOUR_PASSWORD')).then(b => console.log(Buffer.from(b).toString('hex')))"
+
+   # Or in the browser console:
+   # crypto.subtle.digest('SHA-256', new TextEncoder().encode('YOUR_PASSWORD'))
+   #   .then(b => console.log([...new Uint8Array(b)].map(x => x.toString(16).padStart(2,'0')).join('')))
+   ```
+
+2. Copy the resulting hex string and replace the value of `PASSWORD_HASH` in `main.js`.
+
+### Removing the password gate
+
+To disable it entirely, set `PASSWORD_HASH` to an empty string in `main.js`:
+
+```js
+const PASSWORD_HASH = '';
+```
+
+> **Note:** This is client-side protection only. It keeps casual visitors out but is not suitable for sensitive data — anyone who reads the source code could bypass it.
+
 ## Keyboard shortcuts
 
 - **G** – Toggle grid overlay

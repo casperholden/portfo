@@ -6,6 +6,14 @@
 (function () {
   'use strict';
 
+  // SHA-256 hash of the gate password. Default: "preview"
+  // To change it, run in the browser console:
+  //   crypto.subtle.digest('SHA-256', new TextEncoder().encode('YOUR_PASSWORD'))
+  //     .then(b => console.log(Array.from(new Uint8Array(b)).map(x => x.toString(16).padStart(2,'0')).join('')))
+  // Then paste the hex string below.
+  const PASSWORD_HASH = '5975cf1bba432391c94667f5886225f69377c0aa8b9fa21fddfb21c89bcf9092';
+  const STORAGE_KEY = 'portfolio_access';
+
   // Replace with your Google Apps Script Web App URL after deployment
   const SHEETS_JSON_URL = 'https://script.google.com/macros/s/AKfycbyyKa5N1xOaf3ZCP3Af7lzGhiaxPa-_UebM3U61pMVmHvk6idtqRI5XvbRq3qnsmBoS/exec'; // e.g. 'https://script.google.com/macros/s/xxx/exec'
 
@@ -633,6 +641,48 @@
     });
   }
 
+  function sha256(str) {
+    return crypto.subtle
+      .digest('SHA-256', new TextEncoder().encode(str))
+      .then(function (buf) {
+        return Array.from(new Uint8Array(buf))
+          .map(function (b) { return b.toString(16).padStart(2, '0'); })
+          .join('');
+      });
+  }
+
+  function checkPasswordGate(onGranted) {
+    var gate = document.getElementById('passwordGate');
+    var input = document.getElementById('passwordInput');
+
+    if (!gate || !PASSWORD_HASH) {
+      onGranted();
+      return;
+    }
+
+    if (localStorage.getItem(STORAGE_KEY) === PASSWORD_HASH) {
+      gate.classList.add('is-hidden');
+      onGranted();
+      return;
+    }
+
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        sha256(input.value).then(function (hash) {
+          if (hash === PASSWORD_HASH) {
+            localStorage.setItem(STORAGE_KEY, PASSWORD_HASH);
+            gate.classList.add('is-hidden');
+            onGranted();
+          } else {
+            input.classList.add('is-wrong');
+            input.value = '';
+            setTimeout(function () { input.classList.remove('is-wrong'); }, 600);
+          }
+        });
+      }
+    });
+  }
+
   function init() {
     dom.gridOverlay = document.getElementById('gridOverlay');
     dom.panel = document.getElementById('panel');
@@ -665,7 +715,9 @@
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', updateGrowProgress);
 
-    fetchData();
+    checkPasswordGate(function () {
+      fetchData();
+    });
   }
 
   if (document.readyState === 'loading') {

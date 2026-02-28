@@ -49,6 +49,52 @@
   }
 }
 
+/* ==========================================================================
+   Password gate
+   ========================================================================== */
+
+.password-gate {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-bg);
+}
+
+.password-gate.is-hidden {
+  display: none;
+}
+
+.password-gate-box {
+  width: 100%;
+  max-width: 260px;
+  padding: 0 var(--margin);
+}
+
+.password-gate-input {
+  width: 100%;
+  font-family: var(--font);
+  font-size: var(--size-body);
+  letter-spacing: var(--tracking);
+  color: var(--color-text);
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-stroke);
+  padding: 8px 0;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.password-gate-input::placeholder {
+  color: var(--color-stroke);
+}
+
+.password-gate-input.is-wrong {
+  border-bottom-color: #ff3b30;
+}
+
 /* Base */
 html {
   scroll-behavior: smooth;
