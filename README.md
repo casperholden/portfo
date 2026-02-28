@@ -64,6 +64,52 @@ Labels are lowercased and spaces replaced with `_` (e.g. `mail_url`). The site r
 - **G** – Toggle grid overlay
 - **P** – Toggle panel (Grow / Ver 1 / Ver 2)
 
+## Previewing on your phone (iPhone / Android)
+
+You can view the site on your phone by running a local server on your computer and connecting from your phone over Wi-Fi.
+
+### Prerequisites
+
+- Your computer and phone must be on the **same Wi-Fi network**.
+- Python 3 or Node.js installed on your computer.
+
+### Steps
+
+1. **Start a local server** bound to all network interfaces (`0.0.0.0`):
+
+   ```bash
+   # Python
+   python3 -m http.server 8000 --bind 0.0.0.0
+
+   # — or Node.js —
+   npx http-server -p 8000 --host 0.0.0.0
+   ```
+
+2. **Find your computer's local IP address:**
+
+   ```bash
+   # macOS
+   ipconfig getifaddr en0
+
+   # Windows (PowerShell)
+   (Get-NetIPAddress -AddressFamily IPv4 -InterfaceAlias Wi-Fi).IPAddress
+
+   # Linux
+   hostname -I | awk '{print $1}'
+   ```
+
+   You'll get something like `192.168.1.42`.
+
+3. **Open the site on your phone.** In Safari (or any browser), go to:
+
+   ```
+   http://192.168.1.42:8000
+   ```
+
+   Replace `192.168.1.42` with your actual IP from step 2.
+
+> **Tip:** If the page doesn't load, check that your firewall allows incoming connections on port 8000. On macOS you may get a prompt to allow it automatically.
+
 ## Hosting on one.com
 
 1. Upload the repo contents (including `project/` and your images) to your web space via FTP or File Manager.
