@@ -591,8 +591,8 @@
   var mediaPreloaded = false;
 
   function preloadAllMedia() {
-    var bar = document.getElementById('preloader');
-    if (!bar) return;
+    var counter = document.getElementById('preloader');
+    if (!counter) return;
 
     var folders = [];
     state.projects.forEach(function (p) {
@@ -602,18 +602,33 @@
     });
 
     if (folders.length === 0) {
-      bar.classList.add('is-hidden');
+      counter.classList.add('is-hidden');
+      document.body.classList.remove('is-loading');
       return;
     }
 
     var completed = 0;
+    var targetPercent = 0;
+    var displayPercent = 0;
+
+    function animateCounter() {
+      if (displayPercent < targetPercent) {
+        displayPercent = Math.min(displayPercent + 1, targetPercent);
+        counter.textContent = Math.round(displayPercent);
+        requestAnimationFrame(animateCounter);
+      } else if (targetPercent >= 100) {
+        counter.textContent = '100';
+        setTimeout(function () {
+          counter.classList.add('is-hidden');
+          document.body.classList.remove('is-loading');
+        }, 400);
+      }
+    }
 
     function onFolderDone() {
       completed++;
-      bar.style.transform = 'scaleX(' + (completed / folders.length) + ')';
-      if (completed >= folders.length) {
-        setTimeout(function () { bar.classList.add('is-hidden'); }, 500);
-      }
+      targetPercent = Math.round((completed / folders.length) * 100);
+      requestAnimationFrame(animateCounter);
     }
 
     folders.forEach(function (folderName) {
