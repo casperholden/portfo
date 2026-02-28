@@ -57,6 +57,7 @@
   const VIDEO_EXTENSIONS = ['mp4', 'webm'];
   const ALL_MEDIA_EXTENSIONS = ['jpg', 'png', 'gif', 'webp', 'mp4', 'webm'];
   const BASE_MEDIA_PATH = 'project';
+  var mediaCache = {};
   const DUMMY_DESCRIPTION = 'Description';
   const DUMMY_DISCIPLINE = '(discipline)';
 
@@ -392,6 +393,36 @@
     var folderName = wrap.dataset.folderName;
     if (!folderName) return;
     var current = parseInt(wrap.dataset.fileNumber || '1', 10);
+    var cache = mediaCache[folderName];
+
+    if (cache && cache.length > 1) {
+      var curIdx = -1;
+      for (var i = 0; i < cache.length; i++) {
+        if (cache[i].fileNum === current) { curIdx = i; break; }
+      }
+      var nextIdx = (curIdx + 1) % cache.length;
+      var entry = cache[nextIdx];
+
+      var curVideo = wrap.querySelector('video');
+      if (curVideo) curVideo.pause();
+      clearMediaWrap(wrap);
+
+      var el = entry.el;
+      el.style.width = '100%';
+      el.style.height = '100%';
+      el.style.objectFit = 'cover';
+      el.style.objectPosition = 'top';
+      el.style.display = 'block';
+      wrap.appendChild(el);
+      wrap.dataset.fileNumber = String(entry.fileNum);
+
+      if (el.tagName === 'VIDEO') {
+        el.currentTime = 0;
+        el.play().catch(function () {});
+      }
+      return;
+    }
+
     var next = current + 1;
     var alt = (wrap.querySelector('img') || {}).alt || '';
     loadFileByNumber(wrap, folderName, next, alt || undefined, function () {}, function () {
@@ -574,11 +605,13 @@
     }
 
     folders.forEach(function (folderName) {
+      mediaCache[folderName] = [];
       var fileNum = 1;
 
       function probeFile() {
         var base = BASE_MEDIA_PATH + '/' + folderName + '/' + fileNum + '.';
         var extIdx = 0;
+        var fn = fileNum;
 
         function tryExt() {
           if (extIdx >= ALL_MEDIA_EXTENSIONS.length) {
@@ -590,18 +623,37 @@
 
           if (VIDEO_EXTENSIONS.indexOf(ext) === -1) {
             var img = new Image();
-            img.onload = function () { fileNum++; probeFile(); };
+            img.onload = function () {
+              mediaCache[folderName].push({ fileNum: fn, el: img });
+              fileNum++;
+              probeFile();
+            };
             img.onerror = tryExt;
             img.src = base + ext;
           } else {
-            fetch(base + ext)
-              .then(function (res) {
-                if (res.ok) {
-                  return res.blob().then(function () { fileNum++; probeFile(); });
-                }
-                tryExt();
-              })
-              .catch(tryExt);
+            var video = document.createElement('video');
+            video.muted = true;
+            video.loop = true;
+            video.playsInline = true;
+            video.preload = 'auto';
+            video.setAttribute('muted', '');
+            video.setAttribute('loop', '');
+            video.setAttribute('playsinline', '');
+            var source = document.createElement('source');
+            source.src = base + ext;
+            source.type = 'video/' + (ext === 'mp4' ? 'mp4' : 'webm');
+            video.appendChild(source);
+            var onErr = function () { video.onerror = null; source.onerror = null; tryExt(); };
+            video.onerror = onErr;
+            source.onerror = onErr;
+            video.oncanplaythrough = function () {
+              video.oncanplaythrough = null;
+              video.pause();
+              mediaCache[folderName].push({ fileNum: fn, el: video });
+              fileNum++;
+              probeFile();
+            };
+            video.load();
           }
         }
         tryExt();
