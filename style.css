@@ -47,6 +47,7 @@
     --cols: 6;
     --margin: 12px;
     --gutter: 12px;
+    --image-cols-max: 4;
   }
 }
 
@@ -662,7 +663,6 @@ body.image-five-cols.version-shift .project-row.row-hide-image .project-title-ce
   body.image-five-cols.version-shift .project-image-wrap {
     grid-column: 3 / 7;
     grid-row: 3;
-    width: 100% !important;
     flex: none;
   }
 
