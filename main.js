@@ -28,6 +28,7 @@
     version: 1, // 1: Fixed, 2: Shifting
     hideEmptyImage: false,
     showDummyContent: true,
+    imageCarousel: false,
     projects: [],
     copy: {},
     colorMode: 'light'
@@ -50,6 +51,7 @@
     toggleV2: null,
     toggleHideEmpty: null,
     toggleDummyCopy: null,
+    toggleCarousel: null,
     colorModeToggle: null
   };
 
@@ -830,6 +832,61 @@
         render();
       });
     }
+    if (dom.toggleCarousel) {
+      dom.toggleCarousel.addEventListener('click', function () {
+        state.imageCarousel = !state.imageCarousel;
+        document.body.classList.toggle('image-carousel', state.imageCarousel);
+        dom.toggleCarousel.setAttribute('aria-pressed', state.imageCarousel);
+        dom.toggleCarousel.textContent = (state.imageCarousel ? '[x]' : '[ ]') + ' Image carousel';
+        if (state.imageCarousel) {
+          populateCarousels();
+        } else {
+          render();
+        }
+      });
+    }
+  }
+
+  function populateCarousels() {
+    var wraps = document.querySelectorAll('.project-image-wrap[data-folder-name]');
+    wraps.forEach(function (wrap) {
+      var folderName = wrap.dataset.folderName;
+      var cache = mediaCache[folderName];
+      if (!cache || cache.length === 0) return;
+
+      var curVideo = wrap.querySelector('video');
+      if (curVideo) curVideo.pause();
+      while (wrap.firstChild) wrap.removeChild(wrap.firstChild);
+
+      cache.forEach(function (entry) {
+        var src = entry.el;
+        if (src.tagName === 'IMG') {
+          var img = document.createElement('img');
+          img.src = src.src;
+          wrap.appendChild(img);
+        } else if (src.tagName === 'VIDEO') {
+          var video = document.createElement('video');
+          video.muted = true;
+          video.loop = true;
+          video.autoplay = true;
+          video.playsInline = true;
+          video.setAttribute('muted', '');
+          video.setAttribute('loop', '');
+          video.setAttribute('autoplay', '');
+          video.setAttribute('playsinline', '');
+          var source = src.querySelector('source');
+          if (source) {
+            var ns = document.createElement('source');
+            ns.src = source.src;
+            ns.type = source.type;
+            video.appendChild(ns);
+          }
+          wrap.appendChild(video);
+          video.load();
+          video.play().catch(function () {});
+        }
+      });
+    });
   }
 
   function toggleGrid() {
@@ -912,6 +969,7 @@
     dom.toggleV2 = document.getElementById('toggleV2');
     dom.toggleHideEmpty = document.getElementById('toggleHideEmpty');
     dom.toggleDummyCopy = document.getElementById('toggleDummyCopy');
+    dom.toggleCarousel = document.getElementById('toggleCarousel');
     dom.colorModeToggle = document.getElementById('colorModeToggle');
 
     if (dom.colorModeToggle) {

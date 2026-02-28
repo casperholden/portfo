@@ -363,6 +363,28 @@ body.color-mode-dark {
   display: block;
 }
 
+/* Image carousel: horizontal swipeable strip of all project images */
+body.image-carousel .project-image-wrap {
+  display: flex;
+  gap: var(--gutter);
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+}
+
+body.image-carousel .project-image-wrap::-webkit-scrollbar {
+  display: none;
+}
+
+body.image-carousel .project-image-wrap img,
+body.image-carousel .project-image-wrap video {
+  width: auto;
+  height: 100%;
+  flex: 0 0 auto;
+  object-fit: contain;
+}
+
 /* Lock image ratio: preserve original aspect ratio; max height = 4:3 at 4 cols */
 body.lock-image-ratio .project-image-wrap {
   aspect-ratio: auto;
