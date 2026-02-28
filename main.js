@@ -545,6 +545,64 @@
     return row;
   }
 
+  var mediaPreloaded = false;
+
+  function preloadAllMedia() {
+    var bar = document.getElementById('preloader');
+    if (!bar) return;
+
+    var folders = [];
+    state.projects.forEach(function (p) {
+      if (p.folderName && p.imageVisibility === 'yes') {
+        folders.push(p.folderName);
+      }
+    });
+
+    if (folders.length === 0) {
+      bar.classList.add('is-hidden');
+      return;
+    }
+
+    var completed = 0;
+
+    function onFolderDone() {
+      completed++;
+      bar.style.transform = 'scaleX(' + (completed / folders.length) + ')';
+      if (completed >= folders.length) {
+        setTimeout(function () { bar.classList.add('is-hidden'); }, 500);
+      }
+    }
+
+    folders.forEach(function (folderName) {
+      var fileNum = 1;
+
+      function probeFile() {
+        var base = BASE_MEDIA_PATH + '/' + folderName + '/' + fileNum + '.';
+        var extIdx = 0;
+
+        function tryExt() {
+          if (extIdx >= IMAGE_EXTENSIONS.length) {
+            onFolderDone();
+            return;
+          }
+          var ext = IMAGE_EXTENSIONS[extIdx];
+          extIdx++;
+          var img = new Image();
+          img.onload = function () {
+            fileNum++;
+            probeFile();
+          };
+          img.onerror = function () {
+            tryExt();
+          };
+          img.src = base + ext;
+        }
+        tryExt();
+      }
+      probeFile();
+    });
+  }
+
   function render() {
     if (dom.bio) dom.bio.textContent = state.copy.bio || '';
     if (dom.headline) dom.headline.textContent = state.copy.headline || 'Casper Holden';
@@ -566,6 +624,11 @@
       dom.projectList.appendChild(createProjectRow(p, visitLabel, i));
     });
     observeGrow();
+
+    if (!mediaPreloaded) {
+      mediaPreloaded = true;
+      preloadAllMedia();
+    }
   }
 
   function updateGrowProgress() {
