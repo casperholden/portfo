@@ -41,6 +41,7 @@
     headline: null,
     linkLinkedin: null,
     linkMail: null,
+    toggleGridBtn: null,
     toggleGrow: null,
     toggleGrowFromRight: null,
     toggleImageFiveCols: null,
@@ -628,11 +629,19 @@
     }
   }
 
+  function toggleGrid() {
+    state.showGrid = !state.showGrid;
+    dom.gridOverlay.classList.toggle('is-visible', state.showGrid);
+    if (dom.toggleGridBtn) {
+      dom.toggleGridBtn.setAttribute('aria-pressed', state.showGrid);
+      dom.toggleGridBtn.textContent = (state.showGrid ? '[x]' : '[ ]') + ' Grid';
+    }
+  }
+
   function bindKeys() {
     document.addEventListener('keydown', function (e) {
       if (e.key === 'g' || e.key === 'G') {
-        state.showGrid = !state.showGrid;
-        dom.gridOverlay.classList.toggle('is-visible', state.showGrid);
+        toggleGrid();
       }
       if (e.key === 'p' || e.key === 'P') {
         state.showPanel = !state.showPanel;
@@ -691,6 +700,7 @@
     dom.headline = document.getElementById('headline');
     dom.linkLinkedin = document.getElementById('linkLinkedin');
     dom.linkMail = document.getElementById('linkMail');
+    dom.toggleGridBtn = document.getElementById('toggleGridBtn');
     dom.toggleGrow = document.getElementById('toggleGrow');
     dom.toggleGrowFromRight = document.getElementById('toggleGrowFromRight');
     dom.toggleImageFiveCols = document.getElementById('toggleImageFiveCols');
@@ -708,6 +718,10 @@
         dom.colorModeToggle.textContent = state.colorMode;
         dom.colorModeToggle.setAttribute('aria-pressed', state.colorMode === 'dark');
       });
+    }
+
+    if (dom.toggleGridBtn) {
+      dom.toggleGridBtn.addEventListener('click', toggleGrid);
     }
 
     bindPanel();
