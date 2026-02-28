@@ -839,6 +839,13 @@
       dom.toggleGridBtn.addEventListener('click', toggleGrid);
     }
 
+    var panelToggle = document.getElementById('panelToggle');
+    if (panelToggle && dom.panel) {
+      panelToggle.addEventListener('click', function () {
+        dom.panel.classList.toggle('is-collapsed');
+      });
+    }
+
     bindPanel();
     bindKeys();
     window.addEventListener('scroll', onScroll, { passive: true });
