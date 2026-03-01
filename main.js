@@ -925,6 +925,30 @@
     if (!cache || cache.length === 0) return;
     state.overlayFolder = folderName;
     state.overlayFileIdx = (typeof startIdx === 'number') ? startIdx : 0;
+
+    var info = document.getElementById('overlayInfo');
+    if (info) {
+      info.innerHTML = '';
+      var proj = null;
+      for (var i = 0; i < state.projects.length; i++) {
+        if (state.projects[i].folderName === folderName) { proj = state.projects[i]; break; }
+      }
+      if (proj) {
+        var year = document.createElement('span');
+        year.className = 'overlay-info-year';
+        year.textContent = proj.year;
+        var title = document.createElement('span');
+        title.className = 'overlay-info-title';
+        title.textContent = proj.title;
+        var desc = document.createElement('span');
+        desc.className = 'overlay-info-desc';
+        desc.textContent = proj.description;
+        info.appendChild(year);
+        info.appendChild(title);
+        info.appendChild(desc);
+      }
+    }
+
     showOverlayMedia();
     dom.overlay.classList.add('is-open');
     document.body.classList.add('overlay-open');
