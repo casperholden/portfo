@@ -29,7 +29,7 @@
     hideEmptyImage: false,
     showDummyContent: true,
     imageCarousel: false,
-    useOverlay: false,
+    useOverlay: true,
     overlayFolder: null,
     overlayFileIdx: 0,
     projects: [],
@@ -934,6 +934,7 @@
         if (state.projects[i].folderName === folderName) { proj = state.projects[i]; break; }
       }
       if (proj) {
+        var projIdx = state.projects.indexOf(proj);
         var year = document.createElement('span');
         year.className = 'overlay-info-year';
         year.textContent = proj.year;
@@ -942,10 +943,10 @@
         title.textContent = proj.title;
         var desc = document.createElement('span');
         desc.className = 'overlay-info-desc';
-        desc.textContent = proj.description;
+        desc.textContent = (proj.description || (state.showDummyContent ? DUMMY_DESCRIPTIONS[projIdx % DUMMY_DESCRIPTIONS.length] : '')).trim();
         info.appendChild(year);
         info.appendChild(title);
-        info.appendChild(desc);
+        if (desc.textContent) info.appendChild(desc);
       }
     }
 
