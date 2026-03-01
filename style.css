@@ -737,7 +737,7 @@ body.image-five-cols.version-shift .project-row.row-hide-image .project-title-ce
 
 .overlay-media {
   width: calc(100vw - 2 * var(--margin));
-  aspect-ratio: 1 / 1;
+  height: calc(100vw - 2 * var(--margin));
   background: var(--color-placeholder);
   padding: var(--gutter);
   box-sizing: border-box;
@@ -745,6 +745,8 @@ body.image-five-cols.version-shift .project-row.row-hide-image .project-title-ce
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
 .overlay-media img,
