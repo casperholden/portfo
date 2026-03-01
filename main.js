@@ -927,6 +927,7 @@
     state.overlayFileIdx = (typeof startIdx === 'number') ? startIdx : 0;
     showOverlayMedia();
     dom.overlay.classList.add('is-open');
+    document.body.classList.add('overlay-open');
   }
 
   function showOverlayMedia() {
@@ -978,6 +979,7 @@
     var curVideo = dom.overlayMedia.querySelector('video');
     if (curVideo) curVideo.pause();
     dom.overlay.classList.remove('is-open');
+    document.body.classList.remove('overlay-open');
     state.overlayFolder = null;
   }
 

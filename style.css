@@ -738,15 +738,17 @@ body.image-five-cols.version-shift .project-row.row-hide-image .project-title-ce
 .overlay-media {
   width: calc(100vw - 2 * var(--margin));
   height: calc(100vw - 2 * var(--margin));
-  background: var(--color-placeholder);
-  padding: var(--gutter);
-  box-sizing: border-box;
+  background: transparent;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   flex-shrink: 0;
+}
+
+body.overlay-open {
+  overflow: hidden;
 }
 
 .overlay-media img,
