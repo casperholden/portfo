@@ -26,7 +26,10 @@
       </div>
     </header>
 
-    <h1 class="headline" id="headline"><span id="headlineText">Casper Holden</span> <span class="preloader" id="preloader">(0)</span></h1>
+    <h1 class="headline" id="headline">
+      <span class="headline-text" id="headlineText">Casper Holden</span>
+      <span class="preloader" id="preloader">(0)</span>
+    </h1>
 
     <main class="scroll-content">
       <div class="project-list" id="projectList"></div>
@@ -50,8 +53,10 @@
     <div class="overlay" id="overlay">
       <div class="overlay-info" id="overlayInfo"></div>
       <div class="overlay-media" id="overlayMedia"></div>
-      <button type="button" class="overlay-close" id="overlayClose"><span>(close)</span></button>
+      <button type="button" class="overlay-close" id="overlayClose" aria-label="Close overlay"><span class="overlay-close-label-desktop">(esc)</span><span class="overlay-close-label-mobile">(close)</span></button>
     </div>
+
+    <div class="cursor-label" id="cursorLabel" aria-hidden="true"></div>
 
     <script src="main.js"></script>
   </body>

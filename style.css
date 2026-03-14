@@ -31,6 +31,7 @@
   --gutter: 20px;
   --col-w: calc((100vw - 2 * var(--margin) - (var(--cols) - 1) * var(--gutter)) / var(--cols));
   --image-cols-max: 4;
+  --row-open-duration: 300ms;
 }
 
 @media (max-width: 1024px) {
@@ -205,9 +206,9 @@ body {
 }
 
 .bio {
-  grid-column: 1 / 7;
+  grid-column: 1 / 5;
   margin: 16px 0 0;
-  max-width: calc(6 * var(--col-w) + 5 * var(--gutter));
+  max-width: calc(4 * var(--col-w) + 3 * var(--gutter));
 }
 
 .contact-links {
@@ -267,11 +268,12 @@ body.color-mode-dark {
 
 .headline {
   position: fixed;
-  left: 0;
-  right: 0;
+  left: 50%;
   top: 50%;
-  transform: translateY(-50%);
+  transform: translate(-50%, -50%);
   margin: 0;
+  padding: 0;
+  width: max-content;
   text-align: center;
   white-space: nowrap;
   font-size: var(--size-headline);
@@ -282,6 +284,25 @@ body.color-mode-dark {
   pointer-events: none;
   z-index: 2001;
   -webkit-font-smoothing: antialiased;
+}
+
+.headline .headline-text {
+  display: block;
+  white-space: nowrap;
+}
+
+.headline .preloader {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  display: block;
+  margin-top: 0;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.headline .preloader.is-hidden {
+  display: none;
 }
 
 /* ==========================================================================
@@ -313,6 +334,22 @@ body.color-mode-dark {
   --grow-progress: 1;
 }
 
+.project-row.is-clickable {
+  cursor: pointer;
+}
+
+.project-row.is-clickable .project-image-wrap {
+  cursor: pointer;
+}
+
+.project-row.is-clickable:hover .project-title-line {
+  text-decoration: underline;
+}
+
+.project-row.is-open:hover .project-title-line {
+  text-decoration: none;
+}
+
 /* Version 1 (Fixed): 12-col grid – title fixed to col 6, image grows in cols 2–5 */
 .project-row-inner {
   display: grid;
@@ -339,11 +376,18 @@ body.color-mode-dark {
 
 .project-image-wrap {
   grid-column: 1 / 5;
-  width: calc(var(--col-w) + ((var(--image-cols-max) - 1) * var(--col-w) + (var(--image-cols-max) - 1) * var(--gutter)) * var(--grow-progress));
+  --grow-cols-max: 2;
+  width: calc(var(--col-w) + ((var(--grow-cols-max) - 1) * var(--col-w) + (var(--grow-cols-max) - 1) * var(--gutter)) * var(--grow-progress));
   min-width: var(--col-w);
   aspect-ratio: 4 / 3;
+  position: relative;
   background: var(--color-placeholder);
   overflow: hidden;
+  transition: width 0ms linear;
+}
+
+.project-row.is-animating .project-image-wrap {
+  transition: width var(--row-open-duration) cubic-bezier(0.75, 0, 0.25, 1);
 }
 
 .project-image-wrap.is-locked {
@@ -363,7 +407,19 @@ body.color-mode-dark {
   display: block;
 }
 
-/* Image carousel: horizontal swipeable strip of all project images */
+.project-image-counter {
+  position: absolute;
+  top: 2px;
+  left: 4px;
+  font-family: var(--font);
+  font-size: var(--size-body);
+  letter-spacing: var(--tracking);
+  line-height: var(--leading);
+  color: #fff;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  z-index: 2;
+}
 body.image-carousel .project-image-wrap {
   display: flex;
   gap: var(--gutter);
@@ -413,12 +469,13 @@ body.lock-image-ratio .project-image-wrap video {
 .project-title-cell {
   grid-column: 5;
   min-width: 0;
+  max-width: var(--col-w);
 }
 
 .project-title-line {
   font-size: var(--size-body);
   margin: 0;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .project-title-line a {
@@ -523,6 +580,10 @@ body.version-shift .project-disciplines {
   width: 0;
   min-width: 0;
   height: 0;
+}
+
+.project-row.row-hide-image {
+  min-height: calc((2 * var(--col-w) + var(--gutter)) * 3 / 4);
 }
 
 body.version-shift .project-row.row-hide-image .project-image-title-wrap {
@@ -715,8 +776,20 @@ body.image-five-cols.version-shift .project-row.row-hide-image .project-title-ce
   display: flex;
 }
 
+body.overlay-open {
+  overflow: hidden;
+  height: 100%;
+}
+
+html.overlay-open {
+  overflow: hidden;
+  height: 100%;
+}
+
 .overlay-info {
   width: calc(100vw - 2 * var(--margin));
+  max-width: calc(12 * var(--col-w) + 11 * var(--gutter) + 2 * var(--margin));
+  margin: 0 var(--margin);
   padding: var(--top-margin) 0 var(--medium-gap);
   font-size: var(--size-body);
   letter-spacing: var(--tracking);
@@ -732,12 +805,12 @@ body.image-five-cols.version-shift .project-row.row-hide-image .project-title-ce
 }
 
 .overlay-info-title {
-  grid-column: 6;
+  grid-column: 2;
   white-space: nowrap;
 }
 
 .overlay-info-desc {
-  grid-column: 7 / 10;
+  grid-column: 3 / 13;
 }
 
 @media (max-width: 1024px) {
@@ -775,7 +848,8 @@ body.image-five-cols.version-shift .project-row.row-hide-image .project-title-ce
 
 .overlay-media {
   width: calc(100vw - 2 * var(--margin));
-  height: calc(100vw - 2 * var(--margin));
+  max-width: calc(12 * var(--col-w) + 11 * var(--gutter) + 2 * var(--margin));
+  max-height: 80vh;
   background: transparent;
   cursor: pointer;
   display: flex;
@@ -786,7 +860,9 @@ body.image-five-cols.version-shift .project-row.row-hide-image .project-title-ce
 }
 
 .overlay-close {
-  flex: 1;
+  position: absolute;
+  top: var(--top-margin);
+  right: var(--margin);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -798,18 +874,40 @@ body.image-five-cols.version-shift .project-row.row-hide-image .project-title-ce
   letter-spacing: var(--tracking);
   color: var(--color-text);
   cursor: pointer;
+  pointer-events: auto;
 }
 
-.overlay-close span {
+.overlay-close-label-mobile {
+  display: none;
+}
+
+.overlay-close-label-desktop {
   border-bottom: 1px solid var(--color-text);
 }
 
-.overlay-close:hover span {
+.overlay-close-label-desktop:hover {
   border-bottom-color: transparent;
 }
 
-body.overlay-open {
-  overflow: hidden;
+@media (max-width: 1024px) {
+  .overlay-close {
+    position: static;
+    flex: 1;
+    margin-top: var(--medium-gap);
+  }
+
+  .overlay-close-label-desktop {
+    display: none;
+  }
+
+  .overlay-close-label-mobile {
+    display: inline;
+    border-bottom: 1px solid var(--color-text);
+  }
+
+  .overlay-close-label-mobile:hover {
+    border-bottom-color: transparent;
+  }
 }
 
 .overlay-media img,
@@ -818,6 +916,26 @@ body.overlay-open {
   max-height: 100%;
   display: block;
   object-fit: contain;
+}
+
+/* Cursor label (open / next) – follows pointer, difference blend */
+.cursor-label {
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 0;
+  font-family: var(--font);
+  font-size: var(--size-body);
+  letter-spacing: var(--tracking);
+  color: #fff;
+  mix-blend-mode: difference;
+  pointer-events: none;
+  z-index: 10000;
+  visibility: hidden;
+}
+
+.cursor-label.is-visible {
+  visibility: visible;
 }
 
 /* ==========================================================================
