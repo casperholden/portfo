@@ -1190,6 +1190,9 @@
   }
 
   function sha256(str) {
+    if (!crypto.subtle) {
+      return Promise.reject(new Error('crypto.subtle unavailable (requires HTTPS)'));
+    }
     return crypto.subtle
       .digest('SHA-256', new TextEncoder().encode(str))
       .then(function (buf) {
@@ -1199,11 +1202,41 @@
       });
   }
 
+  function tryUnlock(gate, input, onGranted) {
+    sha256(input.value)
+      .then(function (hash) {
+        if (hash === PASSWORD_HASH) {
+          localStorage.setItem(STORAGE_KEY, PASSWORD_HASH);
+          gate.classList.add('is-hidden');
+          onGranted();
+        } else {
+          input.classList.add('is-wrong');
+          input.value = '';
+          setTimeout(function () { input.classList.remove('is-wrong'); }, 600);
+        }
+      })
+      .catch(function () {
+        input.classList.add('is-wrong');
+        input.value = '';
+        input.placeholder = 'Requires HTTPS';
+        setTimeout(function () {
+          input.classList.remove('is-wrong');
+          input.placeholder = 'Password';
+        }, 2000);
+      });
+  }
+
   function checkPasswordGate(onGranted) {
     var gate = document.getElementById('passwordGate');
     var input = document.getElementById('passwordInput');
+    var form = document.getElementById('passwordForm');
 
     if (!gate || !PASSWORD_HASH) {
+      onGranted();
+      return;
+    }
+
+    if (!input) {
       onGranted();
       return;
     }
@@ -1214,21 +1247,21 @@
       return;
     }
 
-    input.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter') {
-        sha256(input.value).then(function (hash) {
-          if (hash === PASSWORD_HASH) {
-            localStorage.setItem(STORAGE_KEY, PASSWORD_HASH);
-            gate.classList.add('is-hidden');
-            onGranted();
-          } else {
-            input.classList.add('is-wrong');
-            input.value = '';
-            setTimeout(function () { input.classList.remove('is-wrong'); }, 600);
-          }
-        });
-      }
-    });
+    function onSubmit(e) {
+      if (e) e.preventDefault();
+      tryUnlock(gate, input, onGranted);
+    }
+
+    if (form) {
+      form.addEventListener('submit', onSubmit);
+    } else {
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          onSubmit();
+        }
+      });
+    }
   }
 
   function init() {

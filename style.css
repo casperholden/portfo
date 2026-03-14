@@ -78,6 +78,22 @@
   padding: 0 var(--margin);
 }
 
+.password-gate-submit {
+  margin-top: var(--medium-gap);
+  font-family: var(--font);
+  font-size: var(--size-body);
+  letter-spacing: var(--tracking);
+  color: var(--color-text);
+  background: transparent;
+  border: 1px solid var(--color-stroke);
+  padding: 8px 16px;
+  cursor: pointer;
+}
+
+.password-gate-submit:hover {
+  border-color: var(--color-text);
+}
+
 .password-gate-input {
   width: 100%;
   font-family: var(--font);
@@ -376,9 +392,9 @@ body.color-mode-dark {
 
 .project-image-wrap {
   grid-column: 1 / 5;
-  --grow-cols-max: 2;
-  width: calc(var(--col-w) + ((var(--grow-cols-max) - 1) * var(--col-w) + (var(--grow-cols-max) - 1) * var(--gutter)) * var(--grow-progress));
-  min-width: var(--col-w);
+  /* Collapsed: 2 cols. Grows to --image-cols-max as --grow-progress goes 0→1 */
+  width: calc((2 * var(--col-w) + var(--gutter)) + ((var(--image-cols-max) - 2) * var(--col-w) + (var(--image-cols-max) - 2) * var(--gutter)) * var(--grow-progress));
+  min-width: calc(2 * var(--col-w) + var(--gutter));
   aspect-ratio: 4 / 3;
   position: relative;
   background: var(--color-placeholder);
